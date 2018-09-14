@@ -49,46 +49,46 @@ def DefiningQuestionAt(qType):
 		if CheckNewType(qType) == True:
 	  		initialQuestionAt(qType)
 	  		return True
-		else: print('Оно граничит с государством '+PopularElement+'?\n')
+		else: print('Оно граничит с государством '+PopularElement+'?')
 
 	elif qType == 'ports': 
 		if CheckNewType(qType) == True:
 	  		initialQuestionAt(qType)
 	  		return True
-		else: print('У этого моря есть порт в городе '+PopularElement+'?\n')
+		else: print('У этого моря есть порт в городе '+PopularElement+'?')
 
 	elif qType == 'islands':
 		if CheckNewType(qType) == True:
 	  		initialQuestionAt(qType)
 	  		return True
-		else: print('Есть ли  остров '+PopularElement+' в водах этого моря?\n')
+		else: print('Есть ли  остров '+PopularElement+' в водах этого моря?')
 
 	elif qType == 'gulfs': 
 		if CheckNewType(qType) == True:
 	  		initialQuestionAt(qType)
 	  		return True
-		else: print('Залив '+PopularElement+' впадает в это море?\n')
+		else: print('Залив '+PopularElement+' впадает в это море?')
 	elif qType == 'rivers': 
 		if CheckNewType(qType) == True:
 	  		initialQuestionAt(qType)
 	  		return True
-		else: print('Река '+PopularElement+' впадает в это море?\n')
+		else: print('Река '+PopularElement+' впадает в это море?')
 	
 	######## Boolean questions
 	elif qType == 'volcanos': 		print('Есть ли известные вулканы поблизости этого моря?')
-	elif qType == 'attraction': 	print(' Можно ли сказать, что это море туристически-популярное?\n')
-	elif qType == 'warFactor':		print('Есть ли известные полигоны военных испытаний в этом море?\n')
-	elif qType == 'extraction': 	print('Добывают ли нефть в этом море?\n')
-	elif qType == 'routes': 		print('Есть ли в этом море крупные торговые пути?\n')
+	elif qType == 'attraction': 	print(' Можно ли сказать, что это море туристически-популярное?')
+	elif qType == 'warFactor':		print('Есть ли известные полигоны военных испытаний в этом море?')
+	elif qType == 'extraction': 	print('Добывают ли нефть в этом море?')
+	elif qType == 'routes': 		print('Есть ли в этом море крупные торговые пути?')
 
 	######## Common Defining Questions
-	elif qType == 'waterBorders': 	print('Загаданное море граничит с морем '+PopularElement+'?\n')		
-	elif qType == 'color': 			print('Вода в этом море '+PopularElement+'?\n'); 
-	elif qType == 'fauna': 			print('Там водится '+PopularElement+'?\n')
-	elif qType == 'facts': 			print('Были ли известные истории сражения с участием государств '+PopularElement+' в этом море?\n')
+	elif qType == 'waterBorders': 	print('Загаданное море граничит с морем '+PopularElement+'?')		
+	elif qType == 'color': 			print('Вода в этом море '+PopularElement+'?'); 
+	elif qType == 'fauna': 			print('Там водится '+PopularElement+'?')
+	elif qType == 'facts': 			print('Были ли известные истории сражения с участием государств '+PopularElement+' в этом море?')
 	elif qType == 'discoverer': 	nextQuestion(qType); return True #It is hard info, u kno
-	elif qType == 'litos': 			print('Это море находится на '+PopularElement+' литосферное плите?\n')
-	elif qType == 'ocean': 			print('Это море впадает в '+PopularElement+' океан?\n')
+	elif qType == 'litos': 			print('Это море находится на '+PopularElement+' литосферное плите?')
+	elif qType == 'ocean': 			print('Это море впадает в '+PopularElement+' океан?')
 	elif qType == 'position':
 		if PopularElement == 'юг': side = 'южной'
 		elif PopularElement == 'север': side = 'северной'
@@ -139,10 +139,15 @@ def maximiseSliceBy(qType):
 		if character in exPopular:
 			ElementCounter.pop(character)
 
-	MostPopular = max(ElementCounter.items(), key=operator.itemgetter(1))[0]
-	return MostPopular
+	try:
+		MostPopular = max(ElementCounter.items(), key=operator.itemgetter(1))[0]
+		return MostPopular
+	except ValueError:
+		print('this must be some kind of a heavy bug, good for you you didn\'t catch it')
+		Restart()
+		return False
 
-
+		
 def AskAnswer(qType,subject):
 	'''
 	Ask user to enter the answer, checking wether it is correct
@@ -218,21 +223,12 @@ def SubtractiveFilter(qType,subject,response):
 					if sea[qType] is False:
 						unrelevant.append(sea['name'])
 
-	print("Db len before SFilter: "+str(len(database)))			#TEMP
-	print("Unwanted seas are:")
-	print(unrelevant)
-	i = 0
 	for sea in database.copy():
-		print('DB Sea: '+str(i)+".) "+str(sea['name']))
 		if sea['name'] in unrelevant:
-			print("deleting sea: "+str(i)+". "+str(sea['name']))
 			database.remove(sea)
-		i+=1	
 
 	if len(database) == 0: Restart(); return True ## cuz this happens sometimes, right?
 
-	print("Db len after SFilter: "+str(len(database)))			#TEMP
-	print("How many should we subtract: "+ str(len(unrelevant)))#TEMP
 	ChangePopularBy(qType,subject)
 	CheckAnswer(qType)
 
@@ -252,22 +248,17 @@ def CheckAnswer(qType):
 
 
 def nextQuestion(qType = 'ocean'):
-	SeaNamesTemp = []
-	for i in range(0,len(database)):
-		SeaNamesTemp.append(database[i]['name'])
-	
-	print("Before Next Question db includes: ")
-	print(SeaNamesTemp)
-	print("Before Next Question db counts: "+str(len(database)))
+	'''
+	Initialises next question
+	In ver 1.0 choose type randomly
+	'''
 	
 	keyList = []
-	print(exPopular)
 	for key in database[0]:
 		if key not in exTypes:
 			keyList.append(key)
 
 	rkey = random.choice(keyList)
-	print(rkey)
 	DefiningQuestionAt(rkey)
 
 
