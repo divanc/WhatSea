@@ -4,8 +4,10 @@ This is module database
 
 newType = {'govBorders':True,'fauna':True, 'ports':True, 'islands':True, 'gulfs':True, 'rivers':True}
 
+
+
 def ComplimentDb(db,name, waterBorders, govBorders, depth, size, color, fauna, temperature, saltiness, position,
- atraction, warFactor, extraction, routes, facts, discoverer, ports, islands, litos, volcanos, gulfs, rivers, ocean):
+ attraction, warFactor, extraction, routes, facts, discoverer, ports, islands, litos, volcanos, gulfs, rivers, ocean):
 	'''
 	Adds all required data to the end of the database
 	'''
@@ -20,7 +22,7 @@ def ComplimentDb(db,name, waterBorders, govBorders, depth, size, color, fauna, t
 		'temperature': temperature,
 		'saltiness': saltiness,
 		'position': position,
-		'attraction': atraction,
+		'attraction': attraction,
 		'warFactor': warFactor,
 		'extraction': extraction,
 		'routes':routes,
@@ -522,3 +524,15 @@ def initStandartSetDb(db = []):
 		'Атлантический'
 	  	)
 	return db
+
+database = initStandartSetDb()
+
+seaNames = []
+for sea in database:
+	seaNames.append(sea['name'])
+seaNames = ", ".join(seaNames)
+
+length = len(seaNames)
+
+if __name__ == '__main__':
+	exit()
