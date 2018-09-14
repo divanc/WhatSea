@@ -1,73 +1,138 @@
 from collections import Counter
 import operator
-import webbrowser
+import database as db
+import WhatSea #Check wether it updates info over time 
+import random
+database = db.initStandartSetDb()
+dunno = 0
+
+def initialQuestionAt(qType):
+	'''
+	Easier the question - easier the awnser. You don't want to ask 10 questions about islands in this sea,
+	 if this sea doesn't have any islands at all
+	So these questions are to be asked at first
+	'''
+	if qType == 'islands': print('В этом море есть острова?\n')
+	elif qType == 'rivers': print('Какие-либо реки впадают в это море?\n')
+	elif qType == 'gulfs': print('Какие-либо заливы впадают в это море?\n')
+	elif qType == 'govBorders': print('Это море имеет какие-либо сухопутные границы?\n')
+	elif qType == 'ports': print('У этого моря есть порты?\n')
+	AskAnswer(qType,'initial')
 
 
-database = [{"name":"Баренцево","age":30},{"name":"УстьКусть","age":30},{"name":"УстьКусть","age":40},{"name":"УстьКусть","age":30}]
-side = ''
+def ApproximateQuestionAt(qType):
+	'''
+	Initialises maths kind of questions which engage some counting within itself 
+	'''
+	if qType == 'depth':
+		nextQuestion(qType)
+	elif qType == 'size':
+		nextQuestion(qType)
+	elif qType == 'temperature':
+		nextQuestion(qType)
+	elif qType == 'saltiness':
+		nextQuestion(qType)
 
 
 def DefiningQuestionAt(qType):
 	'''
-	Unlike BSQ (Big-Slice Question) these questions are designed to put on a narrow filter, so one can find the desired sea, even there are so much in common 
+	These questions are designed to put on a narrow filter, so one can find
+	 the desired sea, even there are so much in common 
 	'''
 	PopularElement = maximiseSliceBy(qType)
 
-	if qType == 'waterBorders': print("Загаданное море граничит с {PopularElement}?\n")
-	if qType == 'govBorders': print("Оно граничит с государством {PopularElement}?\n")
-	if qType == 'depth': print("Noooooooo")	#only bigslicequestion
-	if qType == 'size': print("Noooooooo") #only bigslicequestion
-	if qType == 'color': print('Вода в этом море {PopularElement}?\n')
-	if qType == 'fauna': print('Там водится {PopularElement}?\n')
-	if qType == 'temperature': print("Noooooooo") #onlybsq
-	if qType == 'saltiness': print('Вода в этом море {PopularElement}?\n')
-	if qType == 'position':
+	######## Questions, which require initial to be asked first
+	if qType == 'govBorders':
+		if CheckNewType(qType) == True:
+	  		initialQuestionAt(qType)
+	  		return True
+		else: print('Оно граничит с государством '+PopularElement+'?\n')
+
+	elif qType == 'ports': 
+		if CheckNewType(qType) == True:
+	  		initialQuestionAt(qType)
+	  		return True
+		else: print('У этого моря есть порт в городе '+PopularElement+'?\n')
+
+	elif qType == 'islands':
+		if CheckNewType(qType) == True:
+	  		initialQuestionAt(qType)
+	  		return True
+		else: print('Есть ли  остров '+PopularElement+' в водах этого моря?\n')
+
+	elif qType == 'gulfs': 
+		if CheckNewType(qType) == True:
+	  		initialQuestionAt(qType)
+	  		return True
+		else: print('Залив '+PopularElement+' впадает в это море?\n')
+	elif qType == 'rivers': 
+		if CheckNewType(qType) == True:
+	  		initialQuestionAt(qType)
+	  		return True
+		else: print('Река '+PopularElement+' впадает в это море?\n')
+	
+	######## Common Defining Questions
+	elif qType == 'waterBorders': 	print('Загаданное море граничит с морем '+PopularElement+'?\n')		
+	elif qType == 'color': 			print('Вода в этом море '+PopularElement+'?\n'); 
+	elif qType == 'fauna': 			print('Там водится '+PopularElement+'?\n')
+	elif qType == 'attraction': 	print(' Можно ли сказать, что это море туристически-популярное?\n')
+	elif qType == 'warFactor':		print('Есть ли известные полигоны военных испытаний в этом море?\n')
+	elif qType == 'extraction': 	print('Добывают ли нефть в этом море?\n')
+	elif qType == 'routes': 		print('Есть ли в этом море крупные торговые пути?\n')
+	elif qType == 'facts': 			print('Были ли известные истории сражения с участием государств '+PopularElement+' в этом море?\n')
+	elif qType == 'discoverer': 	nextQuestion(); return True
+	elif qType == 'litos': 			print('Это море находится на '+PopularElement+' литосферное плите?\n')
+	elif qType == 'volcanos': 		print('Есть ли известные вулканы поблизости этого моря?')
+	elif qType == 'ocean': 			print('Это море впадает в '+PopularElement+' океан?\n')
+	elif qType == 'position':
 		if PopularElement == 'юг': side = 'южной'
-		if PopularElement == 'север': side = 'северной'
-		if PopularElement == 'запад': side = 'западной'
-		if PopularElement == 'восток': side = 'восточной'
-		print("Можно ли сказать, что море находится в {side} части света?\n")
-	if qType == 'attraction': print(' Можно ли сказать, что это море туристически-популярное?\n')
-	if qType == 'warFactor': print('Есть ли известные полигоны военных испытаний в этом море?\n')
-	if qType == 'extraction': print('Добывают ли {PopularElement} в этом море?\n')
-	if qType == 'routes': print('{PopularElement}, случаем, не проходит через это море?\n')
-	if qType == 'facts': print('Мне кажется, что {PopularElement} происходило именно в этом море\n')
-	if qType == 'discoverer': print('{PopularElement} как-либо связан с историей этого моря?\n')
-	if qType == 'ports': print('Порт {PopularElement} находится в этом море?\n')
-	if qType == 'islands': print('Есть ли {PopularElement} в водах этого моря?\n') #+bsq
-	if qType == 'litos': print('Ваше море находится на плите {PopularElement}?\n')
-	if qType == 'volcanos': print('Вулкан {PopularElement} находится поблизости этого моря?')
-	if qType == 'gulfs': print('Залив {PopularElement} впадает в это море?\n')
-	if qType == 'rivers': print('Река {PopularElement} впадает в это море?\n')
-	if qType == 'ocean': print('Это море впадает в {PopularElement} океан?\n')
-	else: return False
+		elif PopularElement == 'север': side = 'северной'
+		elif PopularElement == 'запад': side = 'западной'
+		elif PopularElement == 'восток': side = 'восточной'
+		print("Можно ли сказать, что море находится в "+side+" части света?\n")
+	
+	######## Math Questions
+	elif qType == ('depth' or 'size' or 'temperature' or 'saltiness'):
+		ApproximateQuestionAt(qType)
+
+	else: nextQuestion(qType)
 
 	AskAnswer(qType,PopularElement)
 	
+	
+def CheckNewType(qType):
+	'''
+	It  checks wether the type of question wasn't asked before
+	In case it wasn't, initialises initialQuestionAt()
+	'''
+	if db.newType.get(qType) == True: 
+		db.newType[qType] = False
+		return True
+	else:
+		return False
+		
+
 def maximiseSliceBy(qType):
 	'''
 	Defines the maximum amount of similar characters by type, so we can slice the maximum, while
-	composing questions
+	composing questions, if there is a list of characters chooses most popular among them
 	Must have operator and collections libraries imported
 	'''
 	SumStack = []
-	for i in range(0,len(database)):
-		SumStack.append(database[i].get(qType))
+	if type(database[0].get(qType)) == type([]):
+		
+		for i in range(0,len(database)):
+			for j in range(0,len(database[i].get(qType))):
+				SumStack.append(database[i].get(qType)[j])
+
+	else:
+
+		for i in range(0,len(database)):
+			SumStack.append(database[i].get(qType))
 
 	ElementCounter = dict(Counter(SumStack))
 	MostPopular = max(ElementCounter.items(), key=operator.itemgetter(1))[0]
 	return MostPopular
-
-def BigSliceQuestionAt(qType):
-	'''
-	Big-Slice Question (BSQ) are designed to be asked first, as they typically will cut the searcharea in the strongest way
-	RELEVANT()?
-	'''
-	if qType == 'depth': print("Средняя глубина моря больше 200м?\n")
-	if qType == 'size': print("Считается ли это море большим?\n")
-	if qType == 'temperature': print("Средняя температура воды этого моря летом ниже 20 градусов Цельсия?\n")
-	if qType == 'govBorders': print("Море имеет границу с больше, чем 9 государствами?\n")
-	if qType == 'islands': print('В этом море больше 10 островов?\n')
 
 
 def AskAnswer(qType,subject):
@@ -77,16 +142,95 @@ def AskAnswer(qType,subject):
 	i = 0
 	while i < 1: 
 		Data = str(input()).lower()
-		if Data == "да" or Data == "yes": FulfillData(qType,subject); i+=1; return True
-		if Data == "нет" or Data == "no": TrimDatabase(1,qType, subject); i+=1
-		if Data == "не знаю" or Data == "незнаю" or Data == "don't know" or Data == "dont know":
-			webbrowser.open('http://wikipedia.org')
+		if Data == "да" or Data == "yes": SubtractiveFilter(qType, subject,'yes'); i+=1;
+		elif Data == "нет" or Data == "no": SubtractiveFilter(qType, subject,'no'); i+=1
+		elif Data == "не знаю" or Data == "незнаю" or Data == "don't know" or Data == "dont know":
+			dunno += 1; nextQuestion(qType)
 		else:
 			print("Пожалуйста, введите ответ в форме \"Да\",\"Нет\" или \"Не знаю\"")
 			
-def FulfillData():
-	return True
-def TrimDatabase():
-	return True
 
-DefiningQuestionAt('ocean')
+def SubtractiveFilter(qType,subject,response):
+	'''
+	Removes uncorrect seas from database (which may be easily restored) Thus we 
+	won't search by needed characters, but unneeded seas (which were excluded in other questions)
+	'''
+	print("Im here") 				#TEMP
+
+	tempType = type(database[0][qType])
+	unrelevant = []
+
+	if subject == 'initial':
+		for sea in database:
+			if response == 'yes':
+				if len(sea[qType]) == 0:
+					unrelevant.append(sea['name'])
+
+			elif response == 'no':
+				if len(sea[qType]) != 0:
+					unrelevant.append(sea['name'])
+	
+	else: ## If question is not initial
+		if tempType == type([]):
+			for i in range(0,len(database)):
+				if response == 'no':
+					if subject in database[i][qType]:
+						unrelevant.append(database[i]['name'])
+
+				if response == 'yes':
+					if subject not in database[i][qType]:
+						unrelevant.append(database[i]['name'])
+
+		elif tempType == (type('str') or type(True)):
+			for i in range(0,len(database)):
+				if response == 'no':
+					if subject == database[i][qType]:
+						unrelevant.append(database[i]['name'])
+
+				if response == 'yes':
+					if subject != database[i][qType]:
+						unrelevant.append(database[i]['name'])
+
+	for sea in database:
+		if sea['name'] in unrelevant:
+			database.remove(sea)	
+
+	print("Db len after SFilter: "+str(len(database)))			#TEMP
+	print("How many should we subtract: "+ str(len(unrelevant)))#TEMP
+	CheckAnswer(qType)
+
+
+def CheckAnswer(qType):
+	'''
+	Makes sure answer is far away, so module won't ask you billion questions,
+	while there is just 1 sea left 
+	'''
+	FitableAnswers = []
+	tempBool = False
+
+	if len(database) > 1:
+		nextQuestion(qType)
+	else: 
+		CompleteQuiz()
+
+
+def nextQuestion(qType):
+	SeaNamesTemp = []
+	for i in range(0,len(database)):
+		SeaNamesTemp.append(database[i]['name'])
+	
+	print("Before Next Question db includes: ")
+	print(SeaNamesTemp)
+	print("Before Next Question db counts: "+str(len(database)))
+	
+	keyList = []
+	for key in database[0]:
+		keyList.append(key)
+	rkey = random.choice(keyList)
+	print(rkey)
+	DefiningQuestionAt(rkey)
+
+def CompleteQuiz():
+	print("u win, boy")
+#closeType (func will ensure no question at qType will be asked) 
+DefiningQuestionAt('fauna')

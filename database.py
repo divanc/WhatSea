@@ -1,4 +1,8 @@
-db = []
+'''
+This is module database
+'''
+
+newType = {'govBorders':True,'fauna':True, 'ports':True, 'islands':True, 'gulfs':True, 'rivers':True}
 
 def ComplimentDb(db,name, waterBorders, govBorders, depth, size, color, fauna, temperature, saltiness, position,
  atraction, warFactor, extraction, routes, facts, discoverer, ports, islands, litos, volcanos, gulfs, rivers, ocean):
@@ -16,7 +20,7 @@ def ComplimentDb(db,name, waterBorders, govBorders, depth, size, color, fauna, t
 		'temperature': temperature,
 		'saltiness': saltiness,
 		'position': position,
-		'atraction': atraction,
+		'attraction': atraction,
 		'warFactor': warFactor,
 		'extraction': extraction,
 		'routes':routes,
@@ -31,7 +35,7 @@ def ComplimentDb(db,name, waterBorders, govBorders, depth, size, color, fauna, t
 		'ocean': ocean,
 	})
 
-def initStandartSetDb(db):
+def initStandartSetDb(db = []):
 	'''
 	Compiles the initial database which is to be trimmed later via subtractive filters
 	At some point, somebody, who was filling in this information, probably felt very bad about his life
@@ -518,6 +522,3 @@ def initStandartSetDb(db):
 		'Атлантический'
 	  	)
 	return db
-
-if __name__ == '__main__':
-	exit()
