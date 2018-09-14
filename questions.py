@@ -160,35 +160,35 @@ def SubtractiveFilter(qType,subject,response):
 	tempType = type(database[0][qType])
 	unrelevant = []
 
-	if subject == 'initial':
+	if subject is 'initial':
 		for sea in database:
-			if response == 'yes':
-				if len(sea[qType]) == 0:
+			if response is 'yes':
+				if len(sea[qType]) is 0:
 					unrelevant.append(sea['name'])
 
-			elif response == 'no':
-				if len(sea[qType]) != 0:
+			elif response is 'no':
+				if len(sea[qType]) is not 0:
 					unrelevant.append(sea['name'])
 	
 	else: ## If question is not initial
-		if tempType == type([]):
+		if tempType is type([]):
 			for sea in database:
-				if response == 'no':
+				if response is 'no':
 					if subject in sea[qType]:
 						unrelevant.append(sea['name'])
 
-				elif response == 'yes':
+				elif response is 'yes':
 					if subject not in sea[qType]:
 						unrelevant.append(sea['name'])
 
-		elif tempType == (type('str') or type(True)):
+		elif tempType is (type('str') or type(True)):
 			for sea in database:
-				if response == 'no':
-					if subject == sea[qType]:
+				if response is 'no':
+					if subject is  sea[qType]:
 						unrelevant.append(sea['name'])
 
-				elif response == 'yes':
-					if subject != sea[qType]:
+				elif response is 'yes':
+					if subject is not sea[qType]:
 						unrelevant.append(sea['name'])
 
 	for sea in database:
