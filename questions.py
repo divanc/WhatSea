@@ -80,7 +80,7 @@ def DefiningQuestionAt(qType):
 	elif qType == 'extraction': 	print('Добывают ли нефть в этом море?\n')
 	elif qType == 'routes': 		print('Есть ли в этом море крупные торговые пути?\n')
 	elif qType == 'facts': 			print('Были ли известные истории сражения с участием государств '+PopularElement+' в этом море?\n')
-	elif qType == 'discoverer': 	nextQuestion(); return True
+	elif qType == 'discoverer': 	nextQuestion(); return True #It is hard info, u kno
 	elif qType == 'litos': 			print('Это море находится на '+PopularElement+' литосферное плите?\n')
 	elif qType == 'volcanos': 		print('Есть ли известные вулканы поблизости этого моря?')
 	elif qType == 'ocean': 			print('Это море впадает в '+PopularElement+' океан?\n')
@@ -172,24 +172,24 @@ def SubtractiveFilter(qType,subject,response):
 	
 	else: ## If question is not initial
 		if tempType == type([]):
-			for i in range(0,len(database)):
+			for sea in database:
 				if response == 'no':
-					if subject in database[i][qType]:
-						unrelevant.append(database[i]['name'])
+					if subject in sea[qType]:
+						unrelevant.append(sea['name'])
 
-				if response == 'yes':
-					if subject not in database[i][qType]:
-						unrelevant.append(database[i]['name'])
+				elif response == 'yes':
+					if subject not in sea[qType]:
+						unrelevant.append(sea['name'])
 
 		elif tempType == (type('str') or type(True)):
-			for i in range(0,len(database)):
+			for sea in database:
 				if response == 'no':
-					if subject == database[i][qType]:
-						unrelevant.append(database[i]['name'])
+					if subject == sea[qType]:
+						unrelevant.append(sea['name'])
 
-				if response == 'yes':
-					if subject != database[i][qType]:
-						unrelevant.append(database[i]['name'])
+				elif response == 'yes':
+					if subject != sea[qType]:
+						unrelevant.append(sea['name'])
 
 	for sea in database:
 		if sea['name'] in unrelevant:
